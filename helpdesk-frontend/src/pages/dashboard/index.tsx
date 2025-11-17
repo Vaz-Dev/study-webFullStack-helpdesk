@@ -1,21 +1,27 @@
-import { useEffect, useState } from "react";
-import { Menu } from "../../components/menu";
+import { Suspense, useState } from "react";
+import { MainMenu } from "../../components/menu";
+import { Loading } from "../loading";
+import { useAuth } from "../../hooks";
 
 export function Dashboard() {
   const [frame, setFrame] = useState("none");
-  useEffect(() => console.log(`Frame:`, frame), [frame]);
+
+  const user = useAuth();
   return (
-    <main>
-      <nav>
-        <Menu
-          useState={{ state: frame, setState: setFrame }}
-          options={[
-            { label: "Menu 1" },
-            { label: "Menu 2", icon: "XIcon" },
-            { label: "Menu 3" },
-          ]}
-        />
-      </nav>
-    </main>
+    <Suspense fallback=<Loading />>
+      <main>
+        <nav>
+          <MainMenu
+            OptionUseState={{ state: frame, setState: setFrame }}
+            options={[
+              { label: "Menu 1" },
+              { label: "Menu 2", icon: "XIcon" },
+              { label: "Menu 3" },
+            ]}
+          />
+        </nav>
+        <p>{frame}</p>
+      </main>
+    </Suspense>
   );
 }

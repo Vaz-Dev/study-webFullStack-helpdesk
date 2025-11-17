@@ -1,4 +1,4 @@
-import { Menu } from "./menu";
-import { MenuOption } from "./menu-option";
+import { MainMenu } from "./mainMenu";
+import { MainMenuOption } from "./mainMenu-option";
 
-export { Menu, MenuOption };
+export { MainMenu, MainMenuOption };

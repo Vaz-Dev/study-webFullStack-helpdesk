@@ -4,7 +4,7 @@ import * as Icons from "../icons";
 type Props = React.ComponentProps<"li"> & { icon?: string; label?: string };
 export type { Props as MenuOptionsProps };
 
-export function MenuOption({ icon, label, ...props }: Props) {
+export function MainMenuOption({ icon, label, ...props }: Props) {
   const iconItem = icon ? Icons[icon] : Icons.MenuIcon;
   return (
     <li

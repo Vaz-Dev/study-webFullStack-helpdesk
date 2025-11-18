@@ -1,27 +1,26 @@
-import { useEffect } from "react";
-import { useNavigate } from "react-router";
-import { useSuspenseQuery } from "@tanstack/react-query";
-
-export function useAuth(): { name: string; role: string } | undefined {
-  const navigate = useNavigate();
-  const { data } = useSuspenseQuery({
-    queryKey: ["useAuthQuery"],
+import { useQuery } from "@tanstack/react-query";
+// TODO: is not reading the cookie?
+export function useAuth():
+  | { name: string; role: string; email: string; pfp?: Blob }
+  | undefined {
+  const { data } = useQuery({
+    queryKey: ["session"],
     queryFn: async () => {
       const response = await fetch(
         `${import.meta.env.BACKEND_API_URL ?? "http://localhost:3000"}/auth/check`,
+        {
+          credentials: "include",
+        },
       );
-      return response.json();
+      const data = await response.json();
+      if (!data.role || !data.name || !data.email) {
+        throw { code: "UNAUTHORIZED", message: data.message };
+      }
+      return data;
     },
     retry: false,
+    refetchOnWindowFocus: false,
+    staleTime: 5000,
   });
-  useEffect(() => {
-    if (!data.role || !data.name) {
-      // If data does not return a role or name, the user is not logged in.
-      console.error(data.message);
-      navigate("/entrar", { replace: true });
-    }
-  }, [status, navigate]);
-  if (data.name && data.role) {
-    return data;
-  }
+  return data;
 }

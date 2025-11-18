@@ -45,6 +45,8 @@ export class AuthController {
         message: `Cookie token successfully verified`,
         name: req.user?.name,
         role: req.user?.role,
+        email: req.user?.email,
+        pfp: req.user?.pfp ?? undefined,
         minutes_to_expire: (req.auth.exp - Date.now() / 1000) / 60,
       });
     } else {

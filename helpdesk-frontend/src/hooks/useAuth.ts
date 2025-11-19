@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-// TODO: is not reading the cookie?
+
 export function useAuth():
   | { name: string; role: string; email: string; pfp?: Blob }
   | undefined {

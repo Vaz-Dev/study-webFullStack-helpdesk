@@ -1,4 +1,4 @@
-import React, { Suspense, useState } from "react";
+import { Suspense, useState } from "react";
 import { MainMenu } from "../../components/menu";
 import { Loading } from "../loading";
 import { useAuth } from "../../hooks";

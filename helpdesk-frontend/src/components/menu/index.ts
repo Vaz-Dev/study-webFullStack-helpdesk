@@ -1,4 +1,6 @@
 import { MainMenu } from "./mainMenu";
-import { MainMenuOption } from "./mainMenu-option";
+import { MenuOption } from "./menu-option";
+import { UserMenu } from "./userMenu";
+import { DashboardNav } from "./dashboardNav";
 
-export { MainMenu, MainMenuOption };
+export { MainMenu, MenuOption, UserMenu, DashboardNav };

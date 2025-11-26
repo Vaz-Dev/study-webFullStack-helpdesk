@@ -25,7 +25,7 @@ export function RedirectLogin() {
   useEffect(() => {
     queryClient.removeQueries({ queryKey: ["session"] });
     navigate("/entrar", { replace: true });
-  }, [navigate]);
+  }, [navigate, queryClient]);
   return <Loading />;
 }
 
@@ -40,7 +40,6 @@ export class ErrorBoundaryClass extends Component<
   }
 
   render() {
-    console.log(this.state.hasError);
     if (this.state.hasError && this.state.error) {
       if (this.state.error.code === "UNAUTHORIZED") {
         return <RedirectLogin />;

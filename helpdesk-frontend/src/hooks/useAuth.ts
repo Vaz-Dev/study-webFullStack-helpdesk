@@ -1,8 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
+import type { UserAuthData } from "../types/UserData.type";
 
-export function useAuth():
-  | { name: string; role: string; email: string; pfp?: Blob }
-  | undefined {
+export function useAuth(): UserAuthData | undefined {
   const { data } = useQuery({
     queryKey: ["session"],
     queryFn: async () => {

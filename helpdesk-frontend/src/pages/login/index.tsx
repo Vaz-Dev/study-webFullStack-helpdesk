@@ -97,7 +97,7 @@ export function Login() {
               name="email"
               id="login_email_input"
               type="email"
-              placeholder="examplo@email.com"
+              placeholder="exemplo@email.com"
               className="placeholder:text-gray-400 border-b border-gray-500 pb-1 pt-1 outline-0"
               onChange={checkForm}
             ></input>

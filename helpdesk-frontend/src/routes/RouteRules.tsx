@@ -1,7 +1,11 @@
-import { Component, useEffect, type ErrorInfo, type ReactNode } from "react";
+import { Component, useEffect, type ReactElement, type ReactNode } from "react";
 import { useNavigate } from "react-router";
 import { Loading } from "../pages";
 import { useQueryClient } from "@tanstack/react-query";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { useLocation, Routes, Route } from "react-router";
+import { Suspense } from "react";
+import { ErrorPage } from "../pages/error";
 
 interface ErrorBoundaryProps {
   children: ReactNode;
@@ -11,7 +15,33 @@ interface ErrorBoundaryState {
   error: any;
 }
 
-export function RedirectDashboard() {
+export function RouteRules({ children }: { children: ReactElement[] }) {
+  const location = useLocation();
+  return (
+    <QueryClientProvider client={queryClient}>
+      <Suspense fallback=<Loading />>
+        <ErrorBoundaryClass key={location.pathname}>
+          <Routes>
+            <Route path="/" index element={<RedirectMainRoute />} />
+            {children}
+            <Route path="*" element={<ErrorPage />} />
+          </Routes>
+        </ErrorBoundaryClass>
+      </Suspense>
+    </QueryClientProvider>
+  );
+}
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      suspense: true,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
+
+export function RedirectMainRoute() {
   const navigate = useNavigate();
   useEffect(() => {
     navigate("/painel", { replace: true });

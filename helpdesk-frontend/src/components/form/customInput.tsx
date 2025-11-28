@@ -1,11 +1,11 @@
-import type { ChangeEvent } from "react";
+import { useState } from "react";
 
 type Props = React.ComponentProps<"input"> & {
   formName: string;
-  checkInput: (id: string) => inputInfo;
+  checkInput: (id: string) => InputFeedback;
 };
 
-type inputInfo = {
+export type InputFeedback = {
   message: string;
   error: boolean;
 };
@@ -18,14 +18,16 @@ export function CustomInput({
   checkInput,
   ...props
 }: Props) {
-  let inputInfo: undefined | inputInfo;
+  const [inputInfo, setInputInfo] = useState<undefined | InputFeedback>(
+    undefined,
+  );
   let inputInfoElement;
 
   function changeEvent(): void {
-    inputInfo = checkInput(`{${formName}_${inputName}_input`);
+    setInputInfo(checkInput(`${formName}_${inputName}_input`));
   }
 
-  if (inputInfo) {
+  if (inputInfo && inputInfo.message) {
     inputInfoElement = (
       <p
         className={
@@ -43,7 +45,7 @@ export function CustomInput({
     <div className="flex flex-col">
       <label
         htmlFor={`${formName}_${inputName}_input`}
-        className="uppercase text-[10px] text-gray-300"
+        className={`uppercase text-[10px] ${inputInfo?.error ? "text-feedback-danger" : "text-gray-300 peer-focus:text-feedback-progress"}`}
       >
         {inputName}
       </label>
@@ -51,10 +53,12 @@ export function CustomInput({
         required
         name={inputName}
         id={`${formName}_${inputName}_input`}
+        form={`${formName}_form`}
         type={type}
         placeholder={placeholder}
-        className="placeholder:text-gray-400 border-b border-gray-500 pb-1 pt-1 outline-0"
+        className={`placeholder:text-gray-400 border-b pb-1 peer pt-1 outline-0 ${inputInfo?.error ? "border-feedback-danger" : "border-gray-500 focus:border-feedback-progress"}`}
         onChange={changeEvent}
+        formNoValidate
         {...props}
       ></input>
       {inputInfoElement}

@@ -31,9 +31,9 @@ export function CustomInput({
     inputInfoElement = (
       <p
         className={
-          "italic text-xs" + inputInfo.error
-            ? " text-feedback-danger"
-            : " text-gray-400"
+          inputInfo.error
+            ? " text-feedback-danger italic text-xs"
+            : " text-gray-400 italic text-xs"
         }
       >
         {inputInfo.message}
@@ -45,7 +45,7 @@ export function CustomInput({
     <div className="flex flex-col">
       <label
         htmlFor={`${formName}_${inputName}_input`}
-        className={`uppercase text-[10px] ${inputInfo?.error ? "text-feedback-danger" : "text-gray-300 peer-focus:text-feedback-progress"}`}
+        className={`${inputInfo?.error ? "text-feedback-danger uppercase text-[10px]" : "text-gray-300 peer-focus/input:text-feedback-progress uppercase text-[10px]"}`}
       >
         {inputName}
       </label>
@@ -56,7 +56,7 @@ export function CustomInput({
         form={`${formName}_form`}
         type={type}
         placeholder={placeholder}
-        className={`placeholder:text-gray-400 border-b pb-1 peer pt-1 outline-0 ${inputInfo?.error ? "border-feedback-danger" : "border-gray-500 focus:border-feedback-progress"}`}
+        className={`${inputInfo?.error ? "border-feedback-danger  placeholder:text-gray-400 border-b pb-1 peer/input pt-1 outline-0" : "border-gray-500 focus:border-feedback-progress  placeholder:text-gray-400 border-b pb-1 peer pt-1 outline-0"}`}
         onChange={changeEvent}
         formNoValidate
         {...props}

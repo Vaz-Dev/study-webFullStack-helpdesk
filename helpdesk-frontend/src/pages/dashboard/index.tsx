@@ -1,5 +1,4 @@
-import { Suspense, useState } from "react";
-import { Loading } from "../loading";
+import { useState } from "react";
 import { useAuth } from "../../hooks";
 import { DashboardNav } from "../../components/menu";
 

@@ -12,7 +12,13 @@ export function useAuth(): UserAuthData | undefined {
         },
       );
       const data = await response.json();
-      if (!response.ok || !data.role || !data.name || !data.email) {
+      if (
+        !response.ok ||
+        !data.role ||
+        !data.name ||
+        !data.email ||
+        !data.menuFrames
+      ) {
         throw { status: response.status, message: data.message };
       }
       return data;

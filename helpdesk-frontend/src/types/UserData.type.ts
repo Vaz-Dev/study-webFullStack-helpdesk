@@ -3,4 +3,5 @@ export type UserAuthData = {
   role: string;
   email: string;
   pfp?: Blob;
+  menuFrames: { label: string; icon: string }[];
 };

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useAuth } from "../../hooks";
 import { DashboardNav } from "../../components/menu";
+import { CustomPopup } from "../../components/popup";
 
 export function Dashboard() {
   const [frame, setFrame] = useState("none");
@@ -19,6 +20,7 @@ export function Dashboard() {
           {frame == "none" ? "Dashboard" : frame}
         </h1>
       </section>
+      <CustomPopup open={true} title="teste"></CustomPopup>
     </main>
   );
 }

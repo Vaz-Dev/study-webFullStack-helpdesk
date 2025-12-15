@@ -45,11 +45,7 @@ export function DashboardNav({ userAuthData, frameUseState, ...props }: Props) {
         <MainMenu
           navResized={navResized}
           OptionUseState={{ state: frame, setState: setFrame }}
-          options={[
-            { label: "Menu 1" },
-            { label: "Menu 2", icon: "XIcon" },
-            { label: "Menu 3" },
-          ]}
+          options={userAuthData.menuFrames}
           toggleUseState={{ state: menuToggled, setState: setMenuToggle }}
         />
         <div

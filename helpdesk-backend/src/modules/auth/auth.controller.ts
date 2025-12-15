@@ -16,6 +16,7 @@ import { AuthService, Roles } from './auth.service';
 import type { ExtendedRequest } from 'src/types/extended-request.interface';
 import { UserService } from '../user/user.service';
 import { UserUpdateDto } from '../user/dto';
+import { menuFrames } from './data/menuFrames.data';
 
 @Controller('auth')
 export class AuthController {
@@ -37,20 +38,21 @@ export class AuthController {
       .status(HttpStatus.ACCEPTED)
       .json({
         message:
-          'Entrou na conta com sucesso, token adicionado em forma de cookie.',
+          'Entrou na conta com sucesso, token adicionado em forma de cookie',
       });
   }
 
   @Get('check')
   check(@Req() req: ExtendedRequest, @Res() res: Response) {
-    if (req.auth && req.user?.email) {
+    if (req.auth && req.user?.email && req.user?.role) {
       res.status(HttpStatus.ACCEPTED).json({
-        message: `Cookie token successfully verified`,
+        message: `Token verificado com sucesso`,
         name: req.user?.name,
-        role: req.user?.role,
-        email: req.user?.email,
+        role: req.user.role,
+        email: req.user.email,
         pfp: req.user?.pfp ?? undefined,
         minutes_to_expire: (req.auth.exp - Date.now() / 1000) / 60,
+        menuFrames: menuFrames[req.user.role],
       });
     } else {
       throw new NotAcceptableException(
@@ -73,7 +75,7 @@ export class AuthController {
       };
       await this.userService.updateUser(userUpdate);
       res.clearCookie('token').status(HttpStatus.ACCEPTED).json({
-        message: `Conta desconectada de todos dispositivos com sucesso.`,
+        message: `Conta desconectada de todos dispositivos com sucesso`,
       });
     }
   }

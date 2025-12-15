@@ -1,7 +1,10 @@
+import { useNavigate } from "react-router";
+import { useApiFetch } from "../../hooks/useApiFetch";
 import type { UserAuthData } from "../../types/UserData.type";
 import { MenuOption } from "./menu-option";
 
 type Props = React.ComponentProps<"div"> & {
+  navResized: boolean;
   userAuthData: UserAuthData;
   menuUseState: {
     state: string;
@@ -9,14 +12,22 @@ type Props = React.ComponentProps<"div"> & {
   };
 };
 
-export function UserMenu({ userAuthData, menuUseState, ...props }: Props) {
+export function UserMenu({
+  userAuthData,
+  menuUseState,
+  navResized,
+  ...props
+}: Props) {
+  const { sendRequest } = useApiFetch();
+  const navigate = useNavigate();
+
   const name = userAuthData.name;
   const email = userAuthData.email;
-  const role = userAuthData.role;
   const pfp = userAuthData.pfp;
+
   const { state: menuToggled, setState: setMenuToggle } = menuUseState;
-  // todo: hoist this useState to the nav, add feat so only one menu can be open at a time
   const showNav = menuToggled == "user" ? "flex" : "hidden";
+
   let bubbleContent;
   if (!pfp) {
     const nameWords = name.toUpperCase().split(" ");
@@ -31,16 +42,37 @@ export function UserMenu({ userAuthData, menuUseState, ...props }: Props) {
     bubbleContent = <p>{chars}</p>;
   } // todo: else { use pfp }
 
+  async function logout() {
+    const result = await sendRequest({
+      endpoint: "auth/logout",
+      method: "PATCH",
+    });
+    if (result) {
+      navigate("/entrar");
+    }
+  }
+
   return (
-    <div className="static md:relative md:pt-3 md:pb-3 md:pl-2">
+    <div
+      className="static md:relative md:pt-3 md:pb-5 md:pl-2 md:pr-2"
+      {...props}
+    >
       <button
         onClick={() => setMenuToggle(menuToggled == "user" ? "none" : "user")}
-        className="flex gap-3 cursor-pointer md:hover:bg-gray-200 md:active:gap-2 md:active:pr-5 md:border border-transparent md:p-1 md:pr-4 md:rounded-full transition-all"
+        className={
+          navResized
+            ? "flex gap-3 md:p-2 cursor-pointer border-transparent transition-all"
+            : "flex gap-3 cursor-pointer md:hover:bg-gray-200 md:active:gap-2 md:active:pr-5 md:border border-transparent md:p-1 md:pr-4 md:rounded-full transition-all"
+        }
       >
         <div className="flex justify-center items-center size-10 rounded-full bg-blue-dark text-gray-600 text-sm">
           {bubbleContent}
         </div>
-        <div className="flex-col items-baseline hidden md:flex">
+        <div
+          className={
+            navResized ? "hidden" : "flex-col items-baseline hidden md:flex"
+          }
+        >
           <p className="text-sm text-gray-600">{name}</p>
           <p className="text-xs text-gray-400">{email}</p>
         </div>
@@ -56,7 +88,12 @@ export function UserMenu({ userAuthData, menuUseState, ...props }: Props) {
           Opções
         </label>
         <MenuOption icon="UsersIcon" label="Perfil" />
-        <MenuOption icon="LogoutIcon" label="Sair" className="text-red-600" />
+        <MenuOption
+          icon="LogoutIcon"
+          label="Sair"
+          className="text-red-600"
+          onClick={logout}
+        />
       </menu>
     </div>
   );

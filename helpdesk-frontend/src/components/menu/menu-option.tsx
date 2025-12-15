@@ -1,10 +1,14 @@
 import type React from "react";
 import * as Icons from "../icons";
 
-type Props = React.ComponentProps<"li"> & { icon?: string; label?: string };
+type Props = React.ComponentProps<"li"> & {
+  icon?: string;
+  label?: string;
+  navResized: boolean;
+};
 export type { Props as MenuOptionsProps };
 
-export function MenuOption({ icon, label, ...props }: Props) {
+export function MenuOption({ icon, label, navResized, ...props }: Props) {
   const iconItem = icon ? Icons[icon] : Icons.MenuIcon;
   let styles = props.className ?? "";
   styles = " " + styles;
@@ -18,7 +22,9 @@ export function MenuOption({ icon, label, ...props }: Props) {
       {...props}
     >
       {iconItem({ className: "size-5 text-inherit" })}
-      <label className="cursor-[inherit]">{label ?? "Label"}</label>
+      <label className={navResized ? "hidden" : "cursor-[inherit]"}>
+        {label ?? "Label"}
+      </label>
     </li>
   );
 }

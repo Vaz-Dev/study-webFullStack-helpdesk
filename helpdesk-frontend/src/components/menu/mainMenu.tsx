@@ -4,7 +4,8 @@ import { MenuIcon, XIcon } from "../icons";
 import { useDesktopOnly } from "../../hooks";
 
 type Props = React.ComponentProps<"menu"> & {
-  options: MenuOptionsProps[];
+  navResized: boolean;
+  options: Omit<MenuOptionsProps, "navResized">[];
   OptionUseState: {
     state: string;
     setState: React.Dispatch<React.SetStateAction<string>>;
@@ -16,6 +17,7 @@ type Props = React.ComponentProps<"menu"> & {
 };
 
 function MainMenuCore({
+  navResized,
   options: options,
   OptionUseState: optionUseState,
   toggleUseState,
@@ -35,6 +37,7 @@ function MainMenuCore({
           optionUseState.setState(optionData);
           toggleUseState.setState("none");
         }}
+        navResized={navResized}
         key={optionData}
         id={optionData}
         {...isSelected}

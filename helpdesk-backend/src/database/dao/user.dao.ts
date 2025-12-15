@@ -72,7 +72,7 @@ export class UserDAO {
         return await this.dbConnection.query(sql, [id]);
       } else {
         throw new InternalServerErrorException(
-          `Intercepted invalid query to the database.`,
+          `Instrução invalida para o banco de dados interceptada.`,
         );
       }
     } catch (err) {

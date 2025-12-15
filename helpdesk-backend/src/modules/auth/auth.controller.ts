@@ -28,14 +28,17 @@ export class AuthController {
   async login(@Body() data: LoginDto, @Res() res: Response) {
     if (!data.email || !data.password) {
       throw new BadRequestException(
-        'Invalid body, login with body: JSON = {email: ?, password: ?}',
+        `Body invalido, formato esperado: JSON = {email: ?, password: ?}. dados recebido: ${JSON.stringify(data)}`,
       );
     }
     const token = await this.authService.login(data);
     res
       .cookie('token', token, this.authService.cookieOptions)
       .status(HttpStatus.ACCEPTED)
-      .json({ message: 'Login successful, new cookie token sent to client.' });
+      .json({
+        message:
+          'Entrou na conta com sucesso, token adicionado em forma de cookie.',
+      });
   }
 
   @Get('check')
@@ -51,7 +54,7 @@ export class AuthController {
       });
     } else {
       throw new NotAcceptableException(
-        'Cookie token not found, try POST /auth/login',
+        'Token não encontrado, redirecionando para /login',
       );
     }
   }
@@ -60,7 +63,7 @@ export class AuthController {
   async logout(@Req() req: ExtendedRequest, @Res() res: Response) {
     if (!req.auth) {
       throw new NotAcceptableException(
-        'Cookie token not found, client not logged in',
+        'Token não encontrado, usuário não conectado',
       );
     } else {
       const currentTime = Math.floor(Date.now() / 1000);
@@ -70,7 +73,7 @@ export class AuthController {
       };
       await this.userService.updateUser(userUpdate);
       res.clearCookie('token').status(HttpStatus.ACCEPTED).json({
-        message: `Client successfully logged out from all devices.`,
+        message: `Conta desconectada de todos dispositivos com sucesso.`,
       });
     }
   }

@@ -71,7 +71,7 @@ export class ErrorBoundaryClass extends Component<
 
   render() {
     if (this.state.hasError && this.state.error) {
-      if (this.state.error.code === "UNAUTHORIZED") {
+      if (this.state.error.status === 406) {
         return <RedirectLogin />;
       }
     }

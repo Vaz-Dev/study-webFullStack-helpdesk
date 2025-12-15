@@ -1,5 +1,5 @@
 import { useDesktopOnly } from "./useDesktopOnly";
 import { useAuth } from "./useAuth";
-import { useFetchAPI } from "./useFetchAPI";
+import { useApiFetch } from "./useApiFetch";
 
-export { useDesktopOnly, useAuth, useFetchAPI };
+export { useDesktopOnly, useAuth, useApiFetch };

@@ -12,10 +12,8 @@ export function useAuth(): UserAuthData | undefined {
         },
       );
       const data = await response.json();
-      if (response.status == 406) {
-        throw { code: "UNAUTHORIZED", message: data.message };
-      } else if (!data.role || !data.name || !data.email) {
-        throw { code: "UNAUTHORIZED", message: data.message };
+      if (!response.ok || !data.role || !data.name || !data.email) {
+        throw { status: response.status, message: data.message };
       }
       return data;
     },

@@ -65,10 +65,10 @@ export class AuthService {
         const token = this.jwt.sign(payload, this.jwtSignOptions);
         return token;
       } else {
-        throw new NotAcceptableException('Invalid password');
+        throw new NotAcceptableException('Senha incorreta');
       }
     } else {
-      throw new NotAcceptableException('Email does not match with any user');
+      throw new NotAcceptableException('Email não encontrado');
     }
   }
 }
@@ -117,7 +117,7 @@ export class AuthGuard implements CanActivate {
         const [user] = await this.userDAO.getUserById(payload.id);
         if (payload.iat && user.last_logout && user.last_logout > payload.iat) {
           throw new UnauthorizedException(
-            "Client's token refused: older than last logout",
+            'Token recusado: conta descontada em outro dispositivo',
           );
         }
         request.auth = payload;
@@ -136,16 +136,14 @@ export class AuthGuard implements CanActivate {
       this.jwt.verify(tokenCookie, { secret: this.authService.jwtSecret });
     } catch {
       response.clearCookie('token');
-      throw new UnauthorizedException(
-        "Client's token refused, either expired on invalid",
-      );
+      throw new UnauthorizedException('Token recusado: expirado ou inválido');
     }
     if (tokenCookie) {
       // Get client's info and add to the request.
       const [user] = await this.userDAO.getUserById(payload.id);
       if (payload.iat && user.last_logout && user.last_logout > payload.iat) {
         throw new UnauthorizedException(
-          "Client's token refused: older than last logout.",
+          'Token recusado: conta descontada em outro dispositivo',
         );
       }
       request.auth = payload;
@@ -154,14 +152,14 @@ export class AuthGuard implements CanActivate {
     if (!request.user?.role) {
       // Check if the client has any role at all.
       throw new UnauthorizedException(
-        'Client is missing authentication for guarded route.',
+        'Acesso restrito: usuário sem autenticação para endpoint protegido',
       );
     }
     const hasRole = requiredRoles.includes(request.user.role);
     if (!hasRole) {
       // Check if the client has the required role for this route.
       throw new ForbiddenException(
-        'Client has insufficient permission for guarded route.',
+        'Acesso restrito: usuário sem permissão o suficiente para endpoint protegido',
       );
     } else if (this.refreshTokenOnEveryAuth) {
       payload = { id: request.user.user_id };

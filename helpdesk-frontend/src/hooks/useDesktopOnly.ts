@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 export function useDesktopOnly() {
   const [isDesktop, setIsDesktop] = useState(window.innerWidth >= 768);

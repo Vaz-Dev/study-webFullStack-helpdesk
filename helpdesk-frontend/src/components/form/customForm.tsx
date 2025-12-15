@@ -1,7 +1,7 @@
 import type React from "react";
 import { type InputFeedback, CustomInput } from "./customInput";
 import { Alert } from "../alert";
-import { useFetchAPI } from "../../hooks";
+import { useApiFetch } from "../../hooks";
 import { useState, type ReactElement } from "react";
 type InputData = Omit<React.ComponentProps<"input">, "name"> & { name: string };
 
@@ -10,9 +10,10 @@ type Props = Omit<React.ComponentProps<"form">, "name"> & {
   name: string;
   title?: string;
   subtitle?: string;
+  submitButtonText?: string;
   fetch: {
     endpoint: string;
-    method?: string;
+    method?: "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
     onSuccess?: Function;
   };
 };
@@ -51,9 +52,11 @@ export function CustomForm({
   fetch,
   title,
   subtitle,
+  submitButtonText,
   ...props
 }: Props) {
   const [alert, setAlert] = useState<null | ReactElement>(null);
+  const { sendRequest } = useApiFetch();
 
   const inputElements = inputs.map((inputData: InputData) => {
     const inputElement = (
@@ -62,8 +65,10 @@ export function CustomForm({
     return inputElement;
   });
 
-  function submit(formData): void {
-    let inputValues = {};
+  async function submit(event): Promise<void> {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+    const inputKeyValuePairs = {};
     let error = false;
     for (const input of inputs) {
       const inputStatus = checkInput(`${name}_${input.name}_input`);
@@ -72,21 +77,27 @@ export function CustomForm({
       } else if (!input.name) {
         throw new Error(`Unnamed form input`);
       } else {
-        inputValues[input.name] = formData.get(input.name);
+        const inputValue = formData.get(input.name);
+        inputKeyValuePairs[input.name] = inputValue;
       }
     }
     if (error) {
       setAlert(Alert("Preencha os campos acima corretamente."));
-    } else if (inputValues) {
-      const result = useFetchAPI({
+    } else if (Object.keys(inputKeyValuePairs).length > 0) {
+      const result = await sendRequest({
         endpoint: fetch.endpoint,
         method: fetch.method,
-        body: inputValues,
+        body: inputKeyValuePairs,
       });
       if (result.ok && fetch.onSuccess) {
         fetch.onSuccess();
       } else if (!result.ok) {
-        setAlert(Alert(`Ocorreu um erro: ${result.message}`, "failed"));
+        setAlert(
+          Alert(
+            `Ocorreu um erro: ${result.message ?? "API não retornou resposta"}`,
+            "failed",
+          ),
+        );
       }
     }
   }
@@ -104,19 +115,20 @@ export function CustomForm({
 
   return (
     <form
-      action={submit}
+      onSubmit={submit}
       {...props}
       className="flex flex-col p-6 border-gray-500 border rounded-2xl gap-8"
     >
+      <script></script>
       {titleDiv}
-      {...inputElements}
+      <div className="flex flex-col gap-4">{...inputElements}</div>
       {alert}
       <button
-        className="bg-gray-100 pt-2.5 pb-2.5 hover:bg-gray-200 cursor-pointer font-bold text-gray-600 rounded-md transition"
+        className="bg-gray-100 pt-2.5 pb-2.5 hover:bg-gray-300 cursor-pointer font-bold text-gray-600 rounded-md transition"
         type="submit"
         id={`${name}_submit_button`}
       >
-        Entrar
+        {submitButtonText ?? "Enviar"}
       </button>
     </form>
   );

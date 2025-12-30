@@ -4,7 +4,7 @@ import * as Icons from "../icons";
 type Props = React.ComponentProps<"li"> & {
   icon?: string;
   label?: string;
-  navResized: boolean;
+  navResized?: boolean;
 };
 export type { Props as MenuOptionsProps };
 

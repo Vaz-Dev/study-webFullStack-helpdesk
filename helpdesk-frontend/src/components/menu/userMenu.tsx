@@ -2,6 +2,7 @@ import { useNavigate } from "react-router";
 import { useApiFetch } from "../../hooks/useApiFetch";
 import type { UserAuthData } from "../../types/UserData.type";
 import { MenuOption } from "./menu-option";
+import type { PopupHandler } from "../../types/PopupHandler.type";
 
 type Props = React.ComponentProps<"div"> & {
   navResized: boolean;
@@ -10,12 +11,14 @@ type Props = React.ComponentProps<"div"> & {
     state: string;
     setState: React.Dispatch<React.SetStateAction<string>>;
   };
+  popupHandler: PopupHandler;
 };
 
 export function UserMenu({
   userAuthData,
   menuUseState,
   navResized,
+  popupHandler,
   ...props
 }: Props) {
   const { sendRequest } = useApiFetch();
@@ -87,12 +90,63 @@ export function UserMenu({
         <label className="text-[10px] font-bold uppercase text-gray-400 mb-4">
           Opções
         </label>
-        <MenuOption icon="UsersIcon" label="Perfil" />
+        <MenuOption
+          icon="UsersIcon"
+          label="Perfil"
+          onClick={() => {
+            if (popupHandler.ref.current) {
+              const popup = popupHandler.ref.current;
+              popupHandler.set({
+                title: "Perfil",
+                body: <div>TODO: Inserir perfil aqui</div>,
+              });
+              popup.showModal();
+            } else {
+              console.error("Componente CustomPopup não encontrado");
+            }
+          }}
+        />
         <MenuOption
           icon="LogoutIcon"
           label="Sair"
-          className="text-red-600"
-          onClick={logout}
+          className="text-red-500 hover:text-red-600"
+          onClick={() => {
+            if (popupHandler.ref.current) {
+              popupHandler.set({
+                title: "Tem certeza que deseja sair?",
+                body: (
+                  <div className="flex flex-col gap-4">
+                    <p>
+                      Você vai precisar inserir seu email e senha para acessar o
+                      painel novamente,{" "}
+                      <b>
+                        sair também ira desconectar sua conta de todos outros
+                        dispositívos
+                      </b>
+                      .
+                    </p>
+                    <div className="flex justify-around gap-2">
+                      <button
+                        className="p-2 border-2 border-red-800 hover:bg-gray-500 bg-red-800 transition hover:text-red-800 text-gray-600 font-bold rounded-sm w-full cursor-pointer"
+                        onClick={logout}
+                      >
+                        Sair
+                      </button>
+                      <button
+                        className="p-2.5 bg-gray-500 hover:bg-gray-200 text-gray-100 hover:text-gray-600 transition rounded-sm w-full cursor-pointer"
+                        onClick={() => popupHandler.ref.current?.close()}
+                      >
+                        Cancelar
+                      </button>
+                    </div>
+                  </div>
+                ),
+              });
+              popupHandler.ref.current.showModal();
+            } else {
+              console.error("Componente CustomPopup não encontrado");
+            }
+          }}
         />
       </menu>
     </div>

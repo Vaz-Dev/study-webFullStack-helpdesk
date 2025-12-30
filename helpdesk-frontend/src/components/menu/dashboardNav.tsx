@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { MainMenu, UserMenu } from ".";
 import type { UserAuthData } from "../../types/UserData.type";
 import { useDesktopOnly } from "../../hooks";
+import type { PopupHandler } from "../../types/PopupHandler.type";
 
 type Props = React.ComponentProps<"nav"> & {
   userAuthData: UserAuthData;
@@ -9,9 +10,15 @@ type Props = React.ComponentProps<"nav"> & {
     state: string;
     setState: React.Dispatch<React.SetStateAction<string>>;
   };
+  popupHandler: PopupHandler;
 };
 
-export function DashboardNav({ userAuthData, frameUseState, ...props }: Props) {
+export function DashboardNav({
+  userAuthData,
+  frameUseState,
+  popupHandler,
+  ...props
+}: Props) {
   const { state: frame, setState: setFrame } = frameUseState;
   const [menuToggled, setMenuToggle] = useState("none");
   const [isNavResized, setNavResized] = useState(false);
@@ -70,6 +77,7 @@ export function DashboardNav({ userAuthData, frameUseState, ...props }: Props) {
         navResized={navResized}
         userAuthData={userAuthData}
         menuUseState={{ state: menuToggled, setState: setMenuToggle }}
+        popupHandler={popupHandler}
       />
     </nav>
   );
